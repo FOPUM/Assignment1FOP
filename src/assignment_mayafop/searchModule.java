@@ -606,13 +606,29 @@ public class searchModule implements Initializable, ControlledScreen {
             filteredData.setPredicate(courseSearchModel -> {
 
                 // If no values input, no change to the list
-                if (newValue.isEmpty() || newValue.isEmpty() || newValue == null) {
+                if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
                     return true;
                 }
-
+                double unsimilarity = 0;
                 String searchKeyword = newValue.toLowerCase();
-
-                if (courseSearchModel.getCourseName().toLowerCase().indexOf(searchKeyword) > -1) {
+                System.out.println("Seach keyword is: " + searchKeyword);
+                System.out.println("The coursename is: " +courseSearchModel.getCourseName().toLowerCase());
+                char[] courseNameCheckerArray = courseSearchModel.getCourseName().toLowerCase().toCharArray();
+                if (searchKeyword.length() <= courseSearchModel.getCourseName().toLowerCase().length() ) {
+                    for (int k = 0; k < searchKeyword.length(); k++) {
+                        if (searchKeyword.charAt(k) != courseNameCheckerArray[k]) {
+                            System.out.println(searchKeyword.charAt(k)+ " is different with " + courseNameCheckerArray[k]);
+                            unsimilarity++;
+                        }
+                    }
+                }
+                else{
+                    unsimilarity = searchKeyword.length();
+                }
+                
+                unsimilarity = (unsimilarity / searchKeyword.length())*100.00;
+                System.out.println("Unsimilarity%: " + unsimilarity);
+                if (courseSearchModel.getCourseName().toLowerCase().indexOf(searchKeyword) > -1 || unsimilarity <=40) {
                     return true; // Found a match in course name
                 } else if (courseSearchModel.getCourseID().toLowerCase().indexOf(searchKeyword) > -1) {
                     return true; // Found a match in course name
